@@ -61,3 +61,7 @@ src/
 ## Примечание
 
 Это frontend MVP/prototype. Backend, БД, OSRM, Redis и Socket.IO показаны в интерфейсе и документации как архитектурные контракты. Для production версии нужно заменить мок-логику на реальные API-запросы.
+
+## Linux + DB setup
+
+Подробная инструкция по запуску на Linux и подключению PostgreSQL/PostGIS (включая запись пометок в БД): `docs/RUN_LINUX_DB.md`.

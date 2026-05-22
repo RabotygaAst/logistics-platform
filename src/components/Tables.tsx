@@ -161,14 +161,14 @@ export function PermissionMatrix() {
             <tr><th className="p-3">Функция</th>{roles.map((role) => <th key={role.id} className="p-3">{role.id}</th>)}</tr>
           </thead>
           <tbody className="divide-y divide-white/10">
-            {permissions.map(([feature, ...allowed]) => (
-              <tr key={feature}>
+            {permissions.map(([feature, ...allowed]) => {
+              const allowedRoles = allowed as readonly import('../types').RoleId[];
+              return (              <tr key={feature}>
                 <td className="p-3 font-semibold text-white/70">{feature}</td>
                 {roles.map((role) => (
-                  <td key={role.id} className="p-3">{allowed.includes(role.id) ? <CheckCircle2 className="h-4 w-4 text-white" /> : <XCircle className="h-4 w-4 text-white/18" />}</td>
-                ))}
+                  <td key={role.id} className="p-3">{allowedRoles.includes(role.id) ? <CheckCircle2 className="h-4 w-4 text-white" /> : <XCircle className="h-4 w-4 text-white/18" />}</td>                ))}
               </tr>
-            ))}
+            );})}
           </tbody>
         </table>
       </div>
