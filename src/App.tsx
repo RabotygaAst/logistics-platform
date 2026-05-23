@@ -5,7 +5,7 @@ import { money } from './lib/logistics';
 import { ActionButton, GhostButton, Metric, Section, StatusPill } from './components/ui';
 import { DbSchema, EventLog, FleetCards, OrderDetails, PermissionMatrix, ProgressRail, SystemHealth } from './components/Tables';
 import { RolePanel } from './components/RolePanel';
-import { ThreeLogisticsScene } from './components/ThreeLogisticsScene';
+import { OSMMap } from './components/OSMMap';
 
 export default function App() {
   const s = useLogisticsSystem();
@@ -48,14 +48,14 @@ export default function App() {
                   Socket.IO tracking/{s.order.assignedTruck || 'pending'}
                 </span>
               </div>
-              <h2 className="mt-3 text-2xl font-semibold tracking-tight">Three.js realtime monitoring</h2>
+              <h2 className="mt-3 text-2xl font-semibold tracking-tight">OpenStreetMap realtime tracking</h2>
             </div>
             <div className="flex flex-wrap gap-2">
               <ActionButton dark onClick={() => s.setGpsOnline(!s.gpsOnline)}>GPS: {s.gpsOnline ? 'ONLINE' : 'SIGNAL LOST'}</ActionButton>
               <ActionButton dark onClick={s.rebuildOrder}><RefreshCcw className="mr-2 inline h-4 w-4" />Reset</ActionButton>
             </div>
           </div>
-          <ThreeLogisticsScene route={s.route} progress={s.progress} status={s.order.status} gpsOnline={s.gpsOnline} issue={s.order.issue} />
+          <OSMMap route={s.route} progress={s.progress} status={s.order.status} gpsOnline={s.gpsOnline} issue={s.order.issue} />
         </section>
 
         <section className="mb-7">
@@ -86,16 +86,20 @@ export default function App() {
           </div>
 
           <aside className="space-y-7">
-            <Section title="Безопасность" icon={Lock}>
-              <div className="space-y-3 text-sm leading-6 text-white/52">
-                <div className="rounded-2xl border border-white/10 bg-black p-3">JWT авторизация</div>
-                <div className="rounded-2xl border border-white/10 bg-black p-3">RBAC: admin / warehouse / driver / customer</div>
-                <div className="rounded-2xl border border-white/10 bg-black p-3">Валидация входящих данных</div>
-                <div className="rounded-2xl border border-white/10 bg-black p-3">Хэширование паролей</div>
-              </div>
-            </Section>
+            {s.role === 'SUPER_ADMIN' && (
+              <>
+                <Section title="Безопасность" icon={Lock}>
+                  <div className="space-y-3 text-sm leading-6 text-white/52">
+                    <div className="rounded-2xl border border-white/10 bg-black p-3">JWT авторизация</div>
+                    <div className="rounded-2xl border border-white/10 bg-black p-3">RBAC: admin / warehouse / driver / customer</div>
+                    <div className="rounded-2xl border border-white/10 bg-black p-3">Валидация входящих данных</div>
+                    <div className="rounded-2xl border border-white/10 bg-black p-3">Хэширование паролей</div>
+                  </div>
+                </Section>
 
-            <PermissionMatrix />
+                <PermissionMatrix />
+              </>
+            )}
 
             <Section title="Realtime события" icon={Radio}>
               <EventLog events={s.order.audit} />
@@ -112,10 +116,12 @@ export default function App() {
           </aside>
         </section>
 
-        <section className="mt-7 grid gap-7 xl:grid-cols-2">
-          <SystemHealth />
-          <DbSchema />
-        </section>
+        {s.role === 'SUPER_ADMIN' && (
+          <section className="mt-7 grid gap-7 xl:grid-cols-2">
+            <SystemHealth />
+            <DbSchema />
+          </section>
+        )}
       </main>
     </div>
   );
